@@ -1,0 +1,25 @@
+{
+    "name": "B3T-Converter",
+    "version": "1.0.0",
+    "description": "",
+    "author": "Sander Vispoel <contact@sandervispoel.com> (https://sandervispoel.com)",
+    "main": "index.js",
+    "keywords": [],
+    "scripts": {
+        "start": "node index.js",
+        "build": "webpack -p --progress --colors --config webpack.config.prod.js",
+        "dev": "nodemon index.js --exec babel-node --presets env,stage-0"
+    },
+    "dependencies": {
+        "express": "^4.16.2"
+    },
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-loader": "^7.1.2",
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-stage-0": "^6.24.1",
+        "nodemon": "^1.14.12",
+        "webpack": "^3.10.0",
+        "webpack-dev-server": "^2.11.1"
+    }
+}
