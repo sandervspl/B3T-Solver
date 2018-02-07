@@ -60,52 +60,69 @@ const shrinkToTen = (array) => {
 
 const toBinary = (array) => {
     console.log('Looking for matches of 10 in array...');
-    const result = [];
+    let result = array;
 
-    array.forEach((num1, i) => {
-        let matched = false; // FIXME: expensive iterations because we dont break them
+    for (let i = 0; i < result.length; i += 1) {
+        const num1 = result[i];
+        let matched = false;
 
-        console.log('Result array', result);
+        for (let j = i; j < result.length; j +=1) {
+            if (i === j) continue;
+            if (matched) break;
 
-        array.forEach((num2, j) => {
-            if (matched || i === j) return;
+            const num2 = result[j];
 
             if (num1 + num2 === 10) {
-                console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10.`);
                 matched = true;
+                console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10.`);
 
-                // result.concat(num1 > num2 ? [1,0] : [0,1]); // FIXME: why doesnt this work
-                if (num1 > num2) {
-                    result.push(1);
-                    result.push(0);
-                } else {
-                    result.push(0);
-                    result.push(1);
-                }
+                // grab all numbers beyond matching number
+                const beyondNum2 = result.splice(j + 1, result.length);
+                console.log(`Numbers beyond ${num2}:`, beyondNum2);
+
+                // delete matching number from array
+                result.splice(j, 1);
+
+                // shuffle
+                console.log('Shuffling...');
+
+                // set first number
+                result[i] = num1 > num2 ? 1 : 0;
+
+                // splice all numbers beyond first number
+                const tempSlice = result.splice(i + 1, result.length);
+
+                // add 0 or 1 after first number
+                result.push(num1 > num2 ? 0 : 1);
+
+                // add spliced array back to array
+                result = [...result, ...tempSlice];
+
+                console.log('Array after shuffle:', result);
             }
-        });
+        }
 
         if (!matched) {
-            console.log(`No match found. Add ${num1} to Result array.`);
-            result.push(num1);
+            console.log(`No match found. Keep ${num1} in Result array.`);
+            // result.push(num1);
         }
-    });
+    }
 
     console.log('Done! Result:', result);
 
-    if (result.length % 10 !== 0) {
-        toMultipleOfTen(result);
-    } else {
-        // Check if result is complete binary
-        // TODO: If not, add more numbers
-        let num = result.find((num) => num > 1);
-        if (num) {
-            console.log(`Array is not binary. Found number ${num}.`);
-        } else {
-            console.log('Array is binary!');
-            return result;
-        }
-    }
+    // if (result.length % 10 !== 0) {
+    //     toMultipleOfTen(result);
+    // } else {
+    //     // Check if result is complete binary
+    //     // TODO: If not, add more numbers
+    //     let num = result.find((num) => num > 1);
+    //     if (num) {
+    //         console.log(`Array is not binary. Found number ${num}.`);
+    //     } else {
+    //         console.log('Array is binary!');
+    //         return result;
+    //     }
+    // }
 };
 
 const convert = (hash) => {
