@@ -11,21 +11,24 @@ const splitAsciiChars = (ascii) => {
 };
 
 const toMultipleOfTen = (array) => {
-    console.log('cur length:', array.length);
+    const newArray = array;
 
-    if (array.length % 10 !== 0) {
-        const diff = 10 - array.length % 10;
+    console.log('cur length:', newArray.length);
+
+    if (newArray.length % 10 !== 0) {
+        const diff = 10 - newArray.length % 10;
         let i = 0;
 
         _.times(
             diff,
-            () => array.push((i++).toString())
+            () => newArray.push((i++).toString())
         );
 
-        console.log('new length:', array.length);
+        console.log('new length:', newArray.length);
     }
 
-    return array;
+    // return newArray;
+    shrinkToTen(newArray);
 };
 
 // FIXME: name???
@@ -46,17 +49,61 @@ const shrinkToTen = (array) => {
 
     console.log('Final array:', modulatedArray);
 
-    return modulatedArray;
+    // return modulatedArray;
+    toBinary(modulatedArray);
+};
+
+const toBinary = (array) => {
+    const result = [];
+
+    array.forEach((num1, i) => {
+        let matched = false; // FIXME: expensive iterations because we dont break them
+
+        console.log('Match array', result);
+
+        array.forEach((num2, j) => {
+            if (matched || i === j) return;
+
+            if (num1 + num2 === 10) {
+                console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10`);
+                matched = true;
+
+                // result.concat(num1 > num2 ? [1,0] : [0,1]); // FIXME: why doesnt this work
+                if (num1 > num2) {
+                    result.push(1);
+                    result.push(0);
+                } else {
+                    result.push(0);
+                    result.push(1);
+                }
+            }
+        });
+
+        if (!matched) {
+            result.push(num1);
+        }
+    });
+
+    console.log('Done! Result:', result);
+
+    if (result.length % 10 !== 0) {
+        toMultipleOfTen(result);
+    } else {
+        // TODO: Check if result is complete binary
+        // TODO: If not, add more numbers
+        return result;
+    }
 };
 
 const convert = (hash) => {
-    let binary;
-    binary = hashToAscii(hash);
-    binary = splitAsciiChars(binary);
-    binary = toMultipleOfTen(binary);
-    binary = shrinkToTen(binary);
+    let result;
+    result = hashToAscii(hash);
+    result = splitAsciiChars(result);
+    result = toMultipleOfTen(result);
+    // result = shrinkToTen(result);
+    // result = toBinary(result);
 
-    return binary;
+    return result;
 };
 
 export default convert;

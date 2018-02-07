@@ -10,5 +10,5 @@ app.listen(app.get('port'), () => {
 
     console.log(`Hash is: ${hash}`);
     const binary = convertHashToBinary(hash);
-    console.log(binary);
+    console.log('binary result:', binary);
 });
