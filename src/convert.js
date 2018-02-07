@@ -1,5 +1,28 @@
 import _ from 'lodash';
 
+let originalArray;
+let nonce = '';
+
+const addNonce = () => {
+    const numAmount = Math.floor(1 + Math.random() * 4);
+    console.log(`Adding ${numAmount} numbers to original array...`);
+
+    // reset nonce
+    nonce = '';
+
+    _.times(numAmount, () => {
+        const ranNum = Math.floor(Math.random() * 9);
+        originalArray.push(ranNum);
+
+        nonce += ranNum.toString();
+    });
+
+    console.log('Added nonce:', nonce);
+    console.log('New original array:', originalArray);
+
+    return originalArray;
+};
+
 const hashToAscii = (hash) => {
     console.log('Turn hash into ASCII...');
     return hash
@@ -9,7 +32,9 @@ const hashToAscii = (hash) => {
 
 const splitAsciiChars = (ascii) => {
     console.log('Split ASCII characters to singles...');
-    return _.flatten(ascii.map(char => char.split('')));
+    originalArray = _.flatten(ascii.map(char => char.split('')));
+
+    return originalArray;
 };
 
 const toMultipleOfTen = (array) => {
@@ -122,19 +147,20 @@ const toBinary = (array) => {
 
     console.log('Done! Result:', result);
 
-    // if (result.length % 10 !== 0) {
-    //     toMultipleOfTen(result);
-    // } else {
-    //     // Check if result is complete binary
-    //     // TODO: If not, add more numbers
-    //     let num = result.find((num) => num > 1);
-    //     if (num) {
-    //         console.log(`Array is not binary. Found number ${num}.`);
-    //     } else {
-    //         console.log('Array is binary!');
-    //         return result;
-    //     }
-    // }
+    if (result.length % 10 !== 0) {
+        toMultipleOfTen(result);
+    } else {
+        // Check if result is complete binary
+        // TODO: If not, add more numbers
+        let num = result.find((num) => num > 1);
+        if (num) {
+            console.log(`Array is not binary. Found number ${num}.`);
+            toMultipleOfTen(addNonce());
+        } else {
+            console.log('Array is binary!');
+            return result;
+        }
+    }
 };
 
 const convert = (hash) => {
