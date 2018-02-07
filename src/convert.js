@@ -61,13 +61,21 @@ const shrinkToTen = (array) => {
 const toBinary = (array) => {
     console.log('Looking for matches of 10 in array...');
     let result = array;
+    let binarySecondNumIndex = -1;
 
     for (let i = 0; i < result.length; i += 1) {
         const num1 = result[i];
         let matched = false;
 
+        // skip second binary number's index from a previous number match
+        if (binarySecondNumIndex === i) {
+            binarySecondNumIndex = -1;
+            continue;
+        }
+
         for (let j = i; j < result.length; j +=1) {
             if (i === j) continue;
+
             if (matched) break;
 
             const num2 = result[j];
@@ -78,25 +86,29 @@ const toBinary = (array) => {
 
                 // grab all numbers beyond matching number
                 const beyondNum2 = result.splice(j + 1, result.length);
-                console.log(`Numbers beyond ${num2}:`, beyondNum2);
+                console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2);
 
                 // delete matching number from array
+                console.log(`Delete number ${num2} from array...`);
                 result.splice(j, 1);
-
-                // shuffle
-                console.log('Shuffling...');
 
                 // set first number
                 result[i] = num1 > num2 ? 1 : 0;
 
                 // splice all numbers beyond first number
                 const tempSlice = result.splice(i + 1, result.length);
+                console.log(`Cut and save numbers beyond ${num1}:`, tempSlice);
 
                 // add 0 or 1 after first number
                 result.push(num1 > num2 ? 0 : 1);
 
+                console.log('Shuffling...');
+
                 // add spliced array back to array
-                result = [...result, ...tempSlice];
+                result = [...result, ...beyondNum2, ...tempSlice];
+
+                // save this index so we skip it next iteration
+                binarySecondNumIndex = i + 1;
 
                 console.log('Array after shuffle:', result);
             }
