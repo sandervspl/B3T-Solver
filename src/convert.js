@@ -71,7 +71,7 @@ const toBinary = (array) => {
             if (matched || i === j) return;
 
             if (num1 + num2 === 10) {
-                console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10`);
+                console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10.`);
                 matched = true;
 
                 // result.concat(num1 > num2 ? [1,0] : [0,1]); // FIXME: why doesnt this work
@@ -96,9 +96,15 @@ const toBinary = (array) => {
     if (result.length % 10 !== 0) {
         toMultipleOfTen(result);
     } else {
-        // TODO: Check if result is complete binary
+        // Check if result is complete binary
         // TODO: If not, add more numbers
-        return result;
+        let num = result.find((num) => num > 1);
+        if (num) {
+            console.log(`Array is not binary. Found number ${num}.`);
+        } else {
+            console.log('Array is binary!');
+            return result;
+        }
     }
 };
 
