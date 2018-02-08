@@ -1,5 +1,5 @@
 import express from 'express';
-import { hash } from './hash.json';
+import { hash } from './block.json';
 import convertHashToBinary from './convert';
 
 const app = express();

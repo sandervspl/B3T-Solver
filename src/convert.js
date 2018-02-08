@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import block from './block.json';
 
 let originalArray;
 let nonce = '';
@@ -7,15 +8,19 @@ const addNonce = () => {
     const numAmount = Math.floor(1 + Math.random() * 4);
     console.log(`Adding ${numAmount} numbers to original array...`);
 
-    // reset nonce
-    nonce = '';
+    if (block.nonce) {
+        nonce = block.nonce;
+    } else {
+        // reset nonce
+        nonce = '';
 
-    _.times(numAmount, () => {
-        const ranNum = Math.floor(Math.random() * 9);
-        originalArray.push(ranNum);
+        _.times(numAmount, () => {
+            const ranNum = Math.floor(Math.random() * 9);
+            originalArray.push(ranNum);
 
-        nonce += ranNum.toString();
-    });
+            nonce += ranNum.toString();
+        });
+    }
 
     console.log('Added nonce:', nonce);
     console.log('New original array:', originalArray);
@@ -26,6 +31,7 @@ const addNonce = () => {
 const hashToAscii = (hash) => {
     console.log('Turn hash into ASCII...');
     return hash
+        .replace(/\s+/g, '')
         .split('')
         .map(char => isNaN(char) ? char.charCodeAt(0).toString() : char);
 };
