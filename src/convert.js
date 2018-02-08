@@ -167,7 +167,10 @@ const convert = (hash) => {
 
     console.log('Array is binary! We found the nonce!');
 
-    return nonce;
+    return {
+        solution: binaryArray.reduce((str, val) => (str += val), ''),
+        nonce,
+    };
 };
 
 export default convert;
