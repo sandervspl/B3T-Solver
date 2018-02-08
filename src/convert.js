@@ -2,33 +2,27 @@ import _ from 'lodash';
 import block from './block.json';
 
 let originalArray;
-let nonce = '';
+let nonce = -1;
 
-const addNonce = () => {
-    const numAmount = Math.floor(1 + Math.random() * 4);
-    console.log(`Adding ${numAmount} numbers to original array...`);
-
+const addNonceToOriginalArray = () => {
+    // for testing
     if (block.nonce) {
         nonce = block.nonce;
     } else {
-        // reset nonce
-        nonce = '';
-
-        _.times(numAmount, () => {
-            const ranNum = Math.floor(Math.random() * 9);
-            originalArray.push(ranNum);
-
-            nonce += ranNum.toString();
-        });
+        nonce = Number(nonce) + 1;
     }
 
-    console.log('Added nonce:', nonce);
+    console.log('New nonce:', nonce);
+
+    const splitNonce = nonce.toString().split('');
+    originalArray = [...originalArray, ...splitNonce];
+
     console.log('New original array:', originalArray);
 
     return originalArray;
 };
 
-const hashToAscii = (hash) => {
+    const hashToAscii = (hash) => {
     console.log('Turn hash into ASCII...');
     return hash
         .replace(/\s+/g, '')
@@ -64,7 +58,7 @@ const toMultipleOfTen = (array) => {
     }
 
     // return newArray;
-    shrinkToTen(newArray);
+    return shrinkToTen(newArray);
 };
 
 // FIXME: name???
@@ -86,7 +80,7 @@ const shrinkToTen = (array) => {
     console.log('After adding all array numbers:', modulatedArray);
 
     // return modulatedArray;
-    toBinary(modulatedArray);
+    return toBinary(modulatedArray);
 };
 
 const toBinary = (array) => {
@@ -153,30 +147,24 @@ const toBinary = (array) => {
 
     console.log('Done! Result:', result);
 
-    if (result.length % 10 !== 0) {
-        toMultipleOfTen(result);
-    } else {
-        // Check if result is complete binary
-        // TODO: If not, add more numbers
-        let num = result.find((num) => num > 1);
-        if (num) {
-            console.log(`Array is not binary. Found number ${num}.`);
-            toMultipleOfTen(addNonce());
-        } else {
-            console.log('Array is binary!');
-            return result;
-        }
-    }
+    return result;
 };
 
 const convert = (hash) => {
     let result;
+
     result = hashToAscii(hash);
     result = splitAsciiChars(result);
     result = toMultipleOfTen(result);
-    // result = shrinkToTen(result);
-    // result = toBinary(result);
 
+    while(result.find(num => num > 1)) {
+        console.log(`Array is not binary yet.`);
+        console.log('Starting over with Nonce...');
+        result = toMultipleOfTen(addNonceToOriginalArray());
+    }
+
+    console.log('Array is binary!');
+    console.log('Nonce is:', nonce);
     return result;
 };
 
