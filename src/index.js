@@ -1,6 +1,6 @@
 import express from 'express';
 import { hash } from './block.json';
-import convertHashToBinary from './convert';
+import findNonce from './convert';
 
 const app = express();
 app.set('port', 3000);
@@ -9,6 +9,8 @@ app.listen(app.get('port'), () => {
     console.log(`Server started on port ${app.get('port')}`);
 
     console.log(`Hash is: ${hash}`);
-    const binary = convertHashToBinary(hash);
-    console.log('binary result:', binary);
+
+    const nonce = findNonce(hash);
+
+    console.log('Nonce result:', nonce);
 });

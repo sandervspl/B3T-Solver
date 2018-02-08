@@ -1,28 +1,17 @@
 import _ from 'lodash';
-import block from './block.json';
+import { block } from './block.json';
 
-let originalArray;
-let nonce = -1;
+const addNonceToHash = (hash, nonce) => {
+    const nextNonce = Number(nonce) + 1;
+    console.log('New nonce:', nextNonce);
 
-const addNonceToOriginalArray = () => {
-    // for testing
-    if (block.nonce) {
-        nonce = block.nonce;
-    } else {
-        nonce = Number(nonce) + 1;
-    }
+    const nextHash = hash + nextNonce;
+    console.log('new hash', nextHash);
 
-    console.log('New nonce:', nonce);
-
-    const splitNonce = nonce.toString().split('');
-    originalArray = [...originalArray, ...splitNonce];
-
-    console.log('New original array:', originalArray);
-
-    return originalArray;
+    return { nextHash, nextNonce };
 };
 
-    const hashToAscii = (hash) => {
+const hashToAscii = (hash) => {
     console.log('Turn hash into ASCII...');
     return hash
         .replace(/\s+/g, '')
@@ -32,9 +21,7 @@ const addNonceToOriginalArray = () => {
 
 const splitAsciiChars = (ascii) => {
     console.log('Split ASCII characters to singles...');
-    originalArray = _.flatten(ascii.map(char => char.split('')));
-
-    return originalArray;
+    return _.flatten(ascii.map(char => char.split('')));
 };
 
 const toMultipleOfTen = (array) => {
@@ -57,8 +44,7 @@ const toMultipleOfTen = (array) => {
         console.log('Array is multiple of 10!');
     }
 
-    // return newArray;
-    return shrinkToTen(newArray);
+    return newArray;
 };
 
 // FIXME: name???
@@ -79,8 +65,7 @@ const shrinkToTen = (array) => {
 
     console.log('After adding all array numbers:', modulatedArray);
 
-    // return modulatedArray;
-    return toBinary(modulatedArray);
+    return modulatedArray;
 };
 
 const toBinary = (array) => {
@@ -88,6 +73,7 @@ const toBinary = (array) => {
     let result = array;
     let binarySecondNumIndex = -1;
 
+    // TODO: Change to recursive?
     for (let i = 0; i < result.length; i += 1) {
         const num1 = result[i];
         let matched = false;
@@ -141,7 +127,6 @@ const toBinary = (array) => {
 
         if (!matched) {
             console.log(`No match found. Keep ${num1} in Result array.`);
-            // result.push(num1);
         }
     }
 
@@ -150,22 +135,39 @@ const toBinary = (array) => {
     return result;
 };
 
-const convert = (hash) => {
-    let result;
+const hasher = (hash) => {
+    let result = hash;
 
-    result = hashToAscii(hash);
+    result = hashToAscii(result);
     result = splitAsciiChars(result);
     result = toMultipleOfTen(result);
+    result = shrinkToTen(result);
 
-    while(result.find(num => num > 1)) {
+    return toBinary(result);
+};
+
+const convert = (hash) => {
+    const originalHash = hash;  // immutable! Do not change this var because we add a new nonce to the OG every try
+    let binaryArray;
+    let nonce = -1;
+
+    // try to get binary result
+    binaryArray = hasher(originalHash);
+
+    // keep trying
+    while(binaryArray.find(num => num > 1)) {
         console.log(`Array is not binary yet.`);
         console.log('Starting over with Nonce...');
-        result = toMultipleOfTen(addNonceToOriginalArray());
+
+        const { nextHash, nextNonce } = addNonceToHash(originalHash, nonce);
+        nonce = nextNonce;
+
+        binaryArray = hasher(nextHash);
     }
 
-    console.log('Array is binary!');
-    console.log('Nonce is:', nonce);
-    return result;
+    console.log('Array is binary! We found the nonce!');
+
+    return nonce;
 };
 
 export default convert;
