@@ -28,6 +28,24 @@ const getLastBlock = async () => {
     return Object.values(block).reduce((str, val) => (str += val));
 };
 
+const mineNewBlock = async () => {
+    console.log('Fetch new hash info from block transaction...');
+
+    const block = await fetch(`${API}/blockchain/next`)
+        .then(result => result.json())
+        .then(({ transactions, ...block }) => ({
+            from: transactions[0].from,
+            to: transactions[0].to,
+            amount: transactions[0].amount,
+            timestamp1: transactions[0].timestamp,
+            timestamp2: block.timestamp,
+        }))
+        .catch((err) => console.error(err));
+
+    // return hash as one big string
+    return Object.values(block).reduce((str, val) => (str += val));
+};
+
 const start = async () => {
     const hash = await getLastBlock();
     console.log(`Hash is: ${hash}`);
@@ -35,6 +53,14 @@ const start = async () => {
     const { solution } = hasher(hash);
 
     console.log('Solution of last block:', solution);
+
+    const hashStr = await mineNewBlock();
+    const newHash = solution + hashStr;
+    console.log('hash for algorithm:', newHash); // TODO
+
+    const { nonce } = hasher(newHash);
+
+    console.log('Nonce:', nonce);
 };
 
 app.listen(app.get('port'), () => {
