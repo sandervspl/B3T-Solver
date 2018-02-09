@@ -8,9 +8,9 @@ import { hash as mockHash } from './block';
 const app = express();
 app.set('port', 3000);
 
-const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));
+export const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));
 
-const hashFactory = (type, block) => {
+export const hashFactory = (type, block) => {
     switch(type) {
         case 'prev': {
             const { blockchain } = block;
@@ -42,7 +42,7 @@ const hashFactory = (type, block) => {
     }
 };
 
-const getLastBlock = async () => {
+export const getLastBlock = async () => {
     console.log('Fetch last block from blockchain...');
 
     const block = await fetch(`${API}/blockchain/next`)
@@ -53,7 +53,7 @@ const getLastBlock = async () => {
     return block;
 };
 
-const addNewBlock = async (nonce) => {
+export const addNewBlock = async (nonce) => {
     console.log('Adding new block to blockchain...');
 
     await fetch(`${API}/blockchain`, {
@@ -71,7 +71,7 @@ const addNewBlock = async (nonce) => {
         .catch(err => console.log('Error!', err));
 };
 
-const start = async () => {
+export const start = async () => {
     if (mockHash) {
         const { nonce } = hasher(mockHash);
         console.log('Nonce:', nonce);
@@ -91,7 +91,7 @@ const start = async () => {
             const { nonce } = hasher(newHash);
             console.log('Nonce:', nonce);
 
-            // await addNewBlock(nonce);
+            await addNewBlock(nonce);
         } else {
             const time = moment.duration(block.countdown);
             console.log(`Block is closed for ${time.minutes()}:${time.seconds()} minutes.`);

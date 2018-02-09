@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-const getNextHashAndNonce = (hash, nonce) => {
+export const getNextHashAndNonce = (hash, nonce) => {
     const nextNonce = Number(nonce) + 1;
     //console.log('New nonce:', nextNonce);
 
@@ -11,7 +11,7 @@ const getNextHashAndNonce = (hash, nonce) => {
     return { nextHash, nextNonce };
 };
 
-const hashToAscii = (hash) => {
+export const hashToAscii = (hash) => {
     //console.log('Turn hash into ASCII...');
     return hash
         .replace(/\s+/g, '')
@@ -19,12 +19,12 @@ const hashToAscii = (hash) => {
         .map(char => isNaN(char) ? char.charCodeAt(0).toString() : char);
 };
 
-const splitAsciiChars = (ascii) => {
+export const splitAsciiChars = (ascii) => {
     //console.log('Split ASCII characters to singles...');
     return _.flatten(ascii.map(char => char.split('')));
 };
 
-const toMultipleOfTen = (array) => {
+export const toMultipleOfTen = (array) => {
     //console.log('Check if array is multiple of 10...');
     const newArray = array;
 
@@ -47,15 +47,15 @@ const toMultipleOfTen = (array) => {
     return newArray;
 };
 
-const arrayToChunks = (array) => {
+export const arrayToChunks = (array) => {
     return _.chunk(array, 10);
 };
 
-const arrayNumsToSingleDigit = (array) => {
+export const arrayNumsToSingleDigit = (array) => {
     return array.map((num) => num % 10);
 };
 
-const fixArray = (arrayChunks) => {
+export const fixArray = (arrayChunks) => {
     // add up all numbers in array from same index
     const singleArray = arrayChunks.reduce((res, array) => {
         return array.map((char, i) => {
@@ -68,7 +68,7 @@ const fixArray = (arrayChunks) => {
     return arrayNumsToSingleDigit(singleArray);
 };
 
-const checkForMatch = (array, num, i) => {
+export const checkForMatch = (array, num, i) => {
     if (array[i] === undefined) {
         // console.log('No match found. Returning', num);
         return false;
@@ -84,7 +84,7 @@ const checkForMatch = (array, num, i) => {
     return checkForMatch(array, num, i + 1);
 };
 
-const shuffleArray = (array, i) => {
+export const shuffleArray = (array, i) => {
     const num1 = array[i];
 
     // done!
@@ -126,11 +126,11 @@ const shuffleArray = (array, i) => {
     return shuffleArray(tempArray, i + 1);
 };
 
-const toBinary = (array) => {
+export const toBinary = (array) => {
     return shuffleArray(array, 0);
 };
 
-const hasher = (hash) => {
+export const hasher = (hash) => {
     let result = hash;
 
     result = hashToAscii(result);
@@ -142,7 +142,7 @@ const hasher = (hash) => {
     return toBinary(result);
 };
 
-const convert = (hash) => {
+export const convert = (hash) => {
     const originalHash = hash; // immutable! Do not change this var because we add a new nonce to the OG every try
     let binaryArray;
     let nonce = -1;
