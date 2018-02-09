@@ -49,7 +49,7 @@ const getLastBlock = async () => {
         .then(result => result.json())
         .catch(err => console.error('Error!', err));
 
-    console.log('Received block:', block);
+    // console.log('Received block:', JSON.stringify(block, null, 2));
     return block;
 };
 
@@ -76,7 +76,7 @@ const start = async () => {
         const { nonce } = hasher(mockHash);
         console.log('Nonce:', nonce);
     } else {
-        const block = getLastBlock();
+        const block = await getLastBlock();
 
         if (block.open) {
             const hash = hashFactory('prev', block);
@@ -85,14 +85,13 @@ const start = async () => {
             const { solution } = hasher(hash);
             console.log('Solution of last block:', solution);
 
-            const hashStr = hashFactory('next', block);
-            const newHash = solution + hashStr;
+            const newHash = solution + hashFactory('next', block);
             console.log('hash for algorithm:', newHash);
 
             const { nonce } = hasher(newHash);
             console.log('Nonce:', nonce);
 
-            await addNewBlock(nonce);
+            // await addNewBlock(nonce);
         } else {
             const time = moment.duration(block.countdown);
             console.log(`Block is closed for ${time.minutes()}:${time.seconds()} minutes.`);
