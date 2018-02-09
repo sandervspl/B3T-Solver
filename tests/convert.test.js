@@ -4,8 +4,11 @@ import {
 } from '../src/convert';
 
 describe('convert', () => {
-    let hash = 'text';
-    let nonce = 2067;
+    let hash;
+
+    beforeEach(() => {
+        hash = 'text';
+    });
 
     describe('hashToAscii()', () => {
         let hashAscii;
