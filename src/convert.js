@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 const getNextHashAndNonce = (hash, nonce) => {
     const nextNonce = Number(nonce) + 1;
@@ -46,9 +47,13 @@ const toMultipleOfTen = (array) => {
     return newArray;
 };
 
-const arrayToChunks = (array) => _.chunk(array, 10);
+const arrayToChunks = (array) => {
+    return _.chunk(array, 10);
+};
 
-const arrayNumsToSingleDigit = (array) => array.map((num) => num % 10);
+const arrayNumsToSingleDigit = (array) => {
+    return array.map((num) => num % 10);
+};
 
 const fixArray = (arrayChunks) => {
     // add up all numbers in array from same index
@@ -142,6 +147,8 @@ const convert = (hash) => {
     let binaryArray;
     let nonce = -1;
 
+    const mStartTime = moment();
+
     // try to get binary result
     binaryArray = hasher(originalHash);
 
@@ -156,6 +163,8 @@ const convert = (hash) => {
     }
 
     // console.log('Array is binary! We found the nonce!');
+    const mSolveTime = moment.duration(moment().diff(mStartTime));
+    console.log(`Solved in ${mSolveTime.milliseconds()}ms.`);
 
     return {
         solution: binaryArray.reduce((str, val) => (str += val), ''),
