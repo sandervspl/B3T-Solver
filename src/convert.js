@@ -6,7 +6,7 @@ const getNextHashAndNonce = (hash, nonce) => {
     //console.log('New nonce:', nextNonce);
 
     const nextHash = hash + nextNonce;
-    //console.log('new hash', nextHash);
+    //console.log('New hash:', nextHash);
 
     return { nextHash, nextNonce };
 };
@@ -28,7 +28,7 @@ const toMultipleOfTen = (array) => {
     //console.log('Check if array is multiple of 10...');
     const newArray = array;
 
-    //console.log('cur length:', newArray.length);
+    //console.log('Cur length:', newArray.length);
 
     if (newArray.length % 10 !== 0) {
         const diff = 10 - newArray.length % 10;
@@ -74,23 +74,23 @@ const checkForMatch = (array, num, i) => {
         return false;
     }
 
-    // console.log(`matching ${num} and ${array[i]}...`);
-
+    // console.log(`Matching ${num} and ${array[i]}...`);
     if (num + array[i] === 10) {
-        // console.log('found match', i);
+        // console.log('Found match', i);
         return i;
     }
 
-    // console.log('check again');
+    // console.log('Check again');
     return checkForMatch(array, num, i + 1);
 };
 
 const shuffleArray = (array, i) => {
     const num1 = array[i];
-    let tempArray = array;
 
     // done!
-    if (num1 === undefined) return tempArray;
+    if (num1 === undefined) return array;
+
+    let tempArray = array;
 
     // console.log('Match numbers from array', tempArray);
     const num2Index = checkForMatch(tempArray, num1, i + 1);
