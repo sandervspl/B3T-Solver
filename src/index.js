@@ -7,19 +7,13 @@ import { API } from './constants';
 const app = express();
 app.set('port', 3000);
 
-const getLastBlock = async () => {
-    console.log('Fetch last block from blockchain...');
+const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));
 
-    const block = await fetch(`${API}/blockchain/next`)
-        .then(result => result.json())
-        .then(({ blockchain, ...block }) => {
-            if (!block.open) {
-                return {
-                    countdown: block.countdown,
-                };
-            }
-
-            return {
+const hashFactory = (type, block) => {
+    switch(type) {
+        case 'prev': {
+            const { blockchain } = block;
+            const data = {
                 hash: blockchain.hash,
                 from: blockchain.data[0].from,
                 to: blockchain.data[0].to,
@@ -28,35 +22,34 @@ const getLastBlock = async () => {
                 timestamp2: blockchain.timestamp,
                 nonce: blockchain.nonce,
             };
-        })
-        .catch((err) => console.error(err));
 
-    if (block.countdown) return block;
+            return createHash(data);
+        }
+        case 'next': {
+            const { transactions, timestamp } = block;
+            const data = {
+                from: transactions[0].from,
+                to: transactions[0].to,
+                amount: transactions[0].amount,
+                timestamp1: transactions[0].timestamp,
+                timestamp2: timestamp,
+            };
 
-    console.log('Assembling a hash with this data:', block);
-
-    // return block with hash as one big string
-    return {
-        hash: Object.values(block).reduce((str, val) => (str += val)),
+            return createHash(data);
+        }
+        default: return console.log('Invalid hash type supplied to hashFactory');
     }
 };
 
-const mineNewBlock = async () => {
-    console.log('Fetch new hash info from block transaction...');
+const getLastBlock = async () => {
+    console.log('Fetch last block from blockchain...');
 
     const block = await fetch(`${API}/blockchain/next`)
         .then(result => result.json())
-        .then(({ transactions, ...block }) => ({
-            from: transactions[0].from,
-            to: transactions[0].to,
-            amount: transactions[0].amount,
-            timestamp1: transactions[0].timestamp,
-            timestamp2: block.timestamp,
-        }))
-        .catch((err) => console.error(err));
+        .catch(err => console.error('Error!', err));
 
-    // return hash as one big string
-    return Object.values(block).reduce((str, val) => (str += val));
+    console.log('Received block:', block);
+    return block;
 };
 
 const addNewBlock = async (nonce) => {
@@ -69,30 +62,29 @@ const addNewBlock = async (nonce) => {
         },
         body: JSON.stringify({
             nonce,
-            user: 'Sander, 0832970,'
+            user: 'Sander, 0832970',
         }),
     })
         .then(result => result.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(err));
+        .then(data => console.log('Succes!', data))
+        .catch(err => console.log('Error!', err));
 };
 
 const start = async () => {
     const block = await getLastBlock();
 
-    if (block.hash) {
-        console.log(`Hash is: ${block.hash}`);
+    if (block.open) {
+        const hash = hashFactory('prev', block);
+        console.log(`Hash is: ${hash}`);
 
-        const { solution } = hasher(block.hash);
-
+        const { solution } = hasher(hash);
         console.log('Solution of last block:', solution);
 
-        const hashStr = await mineNewBlock();
+        const hashStr = hashFactory('next', block);
         const newHash = solution + hashStr;
         console.log('hash for algorithm:', newHash);
 
         const { nonce } = hasher(newHash);
-
         console.log('Nonce:', nonce);
 
         await addNewBlock(nonce);
