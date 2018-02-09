@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { block } from './block.json';
 
 const addNonceToHash = (hash, nonce) => {
     const nextNonce = Number(nonce) + 1;
@@ -61,11 +60,8 @@ const shrinkToTen = (array) => {
         });
     }, []);
 
-    const modulatedArray = addedArray.map((num) => num % 10);
-
     //console.log('After adding all array numbers:', modulatedArray);
-
-    return modulatedArray;
+    return addedArray.map((num) => num % 10);
 };
 
 const toBinary = (array) => {

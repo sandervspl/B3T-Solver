@@ -1,5 +1,6 @@
 import express from 'express';
 import fetch from 'node-fetch';
+import moment from 'moment';
 import hasher from './convert';
 import { API } from './constants';
 
@@ -11,21 +12,33 @@ const getLastBlock = async () => {
 
     const block = await fetch(`${API}/blockchain/next`)
         .then(result => result.json())
-        .then(({ blockchain }) => ({
-            hash: blockchain.hash,
-            from: blockchain.data[0].from,
-            to: blockchain.data[0].to,
-            amount: blockchain.data[0].amount,
-            timestamp1: blockchain.data[0].timestamp,
-            timestamp2: blockchain.timestamp,
-            nonce: blockchain.nonce,
-        }))
+        .then(({ blockchain, ...block }) => {
+            if (!block.open) {
+                return {
+                    countdown: block.countdown,
+                };
+            }
+
+            return {
+                hash: blockchain.hash,
+                from: blockchain.data[0].from,
+                to: blockchain.data[0].to,
+                amount: blockchain.data[0].amount,
+                timestamp1: blockchain.data[0].timestamp,
+                timestamp2: blockchain.timestamp,
+                nonce: blockchain.nonce,
+            };
+        })
         .catch((err) => console.error(err));
+
+    if (block.countdown) return block;
 
     console.log('Assembling a hash with this data:', block);
 
-    // return hash as one big string
-    return Object.values(block).reduce((str, val) => (str += val));
+    // return block with hash as one big string
+    return {
+        hash: Object.values(block).reduce((str, val) => (str += val)),
+    }
 };
 
 const mineNewBlock = async () => {
@@ -65,22 +78,28 @@ const addNewBlock = async (nonce) => {
 };
 
 const start = async () => {
-    const hash = await getLastBlock();
-    console.log(`Hash is: ${hash}`);
+    const block = await getLastBlock();
 
-    const { solution } = hasher(hash);
+    if (block.hash) {
+        console.log(`Hash is: ${block.hash}`);
 
-    console.log('Solution of last block:', solution);
+        const { solution } = hasher(block.hash);
 
-    const hashStr = await mineNewBlock();
-    const newHash = solution + hashStr;
-    console.log('hash for algorithm:', newHash); // TODO
+        console.log('Solution of last block:', solution);
 
-    const { nonce } = hasher(newHash);
+        const hashStr = await mineNewBlock();
+        const newHash = solution + hashStr;
+        console.log('hash for algorithm:', newHash);
 
-    console.log('Nonce:', nonce);
+        const { nonce } = hasher(newHash);
 
-    await addNewBlock(nonce);
+        console.log('Nonce:', nonce);
+
+        await addNewBlock(nonce);
+    } else {
+        const time = moment.duration(block.countdown);
+        console.log(`Block is closed for ${time.minutes()}:${time.seconds()} minutes.`);
+    }
 };
 
 app.listen(app.get('port'), async () => {
