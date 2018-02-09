@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import moment from 'moment';
 import hasher from './convert';
 import { API } from './constants';
+import { hash as mockHash } from './block';
 
 const app = express();
 app.set('port', 3000);
@@ -71,26 +72,31 @@ const addNewBlock = async (nonce) => {
 };
 
 const start = async () => {
-    const block = await getLastBlock();
-
-    if (block.open) {
-        const hash = hashFactory('prev', block);
-        console.log(`Hash is: ${hash}`);
-
-        const { solution } = hasher(hash);
-        console.log('Solution of last block:', solution);
-
-        const hashStr = hashFactory('next', block);
-        const newHash = solution + hashStr;
-        console.log('hash for algorithm:', newHash);
-
-        const { nonce } = hasher(newHash);
+    if (mockHash) {
+        const { nonce } = hasher(mockHash);
         console.log('Nonce:', nonce);
-
-        await addNewBlock(nonce);
     } else {
-        const time = moment.duration(block.countdown);
-        console.log(`Block is closed for ${time.minutes()}:${time.seconds()} minutes.`);
+        const block = getLastBlock();
+
+        if (block.open) {
+            const hash = hashFactory('prev', block);
+            console.log(`Hash is: ${hash}`);
+
+            const { solution } = hasher(hash);
+            console.log('Solution of last block:', solution);
+
+            const hashStr = hashFactory('next', block);
+            const newHash = solution + hashStr;
+            console.log('hash for algorithm:', newHash);
+
+            const { nonce } = hasher(newHash);
+            console.log('Nonce:', nonce);
+
+            await addNewBlock(nonce);
+        } else {
+            const time = moment.duration(block.countdown);
+            console.log(`Block is closed for ${time.minutes()}:${time.seconds()} minutes.`);
+        }
     }
 };
 
