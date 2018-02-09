@@ -91,32 +91,29 @@ const toBinary = (array) => {
                 matched = true;
                 //console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10.`);
 
+                const binaryNums = num1 > num2 ? [1,0] : [0,1];
+
                 // grab all numbers beyond matching number
-                const beyondNum2 = result.splice(j + 1, result.length);
+                const beyondNum2 = result.splice(j + 1);
                 //console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2);
 
                 // delete matching number from array
                 //console.log(`Delete number ${num2} from array...`);
                 result.splice(j, 1);
 
-                // set first number
-                result[i] = num1 > num2 ? 1 : 0;
-
                 // splice all numbers beyond first number
-                const tempSlice = result.splice(i + 1, result.length);
+                const tempSlice = result.splice(i + 1);
                 //console.log(`Cut and save numbers beyond ${num1}:`, tempSlice);
 
-                // add 0 or 1 after first number
-                result.push(num1 > num2 ? 0 : 1);
-
-                //console.log('Shuffling...');
+                // remove first number and add binary numbers
+                result.splice(i, 1, binaryNums[0], binaryNums[1]);
 
                 // add spliced array back to array
+                //console.log('Shuffling...');
                 result = [...result, ...beyondNum2, ...tempSlice];
 
                 // save this index so we skip it next iteration
                 binarySecondNumIndex = i + 1;
-
                 //console.log('Array after shuffle:', result);
             }
         }
@@ -143,7 +140,7 @@ const hasher = (hash) => {
 };
 
 const convert = (hash) => {
-    const originalHash = hash;  // immutable! Do not change this var because we add a new nonce to the OG every try
+    const originalHash = hash; // immutable! Do not change this var because we add a new nonce to the OG every try
     let binaryArray;
     let nonce = -1;
 
