@@ -46,6 +46,24 @@ const mineNewBlock = async () => {
     return Object.values(block).reduce((str, val) => (str += val));
 };
 
+const addNewBlock = async (nonce) => {
+    console.log('Adding new block to blockchain...');
+
+    await fetch(`${API}/blockchain`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nonce,
+            user: 'Sander, 0832970,'
+        }),
+    })
+        .then(result => result.json())
+        .then(data => console.log(data))
+        .catch(err => console.log(err));
+};
+
 const start = async () => {
     const hash = await getLastBlock();
     console.log(`Hash is: ${hash}`);
@@ -61,10 +79,12 @@ const start = async () => {
     const { nonce } = hasher(newHash);
 
     console.log('Nonce:', nonce);
+
+    await addNewBlock(nonce);
 };
 
-app.listen(app.get('port'), () => {
+app.listen(app.get('port'), async () => {
     console.log(`Server started on port ${app.get('port')}`);
-    start();
+    await start();
 });
 
