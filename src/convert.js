@@ -46,86 +46,83 @@ const toMultipleOfTen = (array) => {
     return newArray;
 };
 
-// FIXME: name???
-const shrinkToTen = (array) => {
-    const chunks = _.chunk(array, 10);
+const arrayToChunks = (array) => _.chunk(array, 10);
 
-    //console.log('Turn array into chunks of 10...');
-    //console.log(chunks);
+const arrayNumsToSingleDigit = (array) => array.map((num) => num % 10);
 
-    const addedArray = chunks.reduce((res, array) => {
+const fixArray = (arrayChunks) => {
+    // add up all numbers in array from same index
+    const singleArray = arrayChunks.reduce((res, array) => {
         return array.map((char, i) => {
             if (!res[i]) return Number(char);
             return Number(res[i]) + Number(char);
         });
     }, []);
 
-    //console.log('After adding all array numbers:', modulatedArray);
-    return addedArray.map((num) => num % 10);
+    //console.log('After adding all array numbers:', singleArray);
+    return arrayNumsToSingleDigit(singleArray);
+};
+
+const checkForMatch = (array, num, i) => {
+    if (array[i] === undefined) {
+        // console.log('No match found. Returning', num);
+        return false;
+    }
+
+    // console.log(`matching ${num} and ${array[i]}...`);
+
+    if (num + array[i] === 10) {
+        // console.log('found match', i);
+        return i;
+    }
+
+    // console.log('check again');
+    return checkForMatch(array, num, i + 1);
+};
+
+const shuffleArray = (array, i) => {
+    const num1 = array[i];
+    let tempArray = array;
+
+    // done!
+    if (num1 === undefined) return tempArray;
+
+    // console.log('Match numbers from array', tempArray);
+    const num2Index = checkForMatch(tempArray, num1, i + 1);
+
+    if (num2Index) {
+        const num2 = tempArray[num2Index];
+        const binaryNums = num1 > num2 ? [1, 0] : [0, 1];
+
+        // grab all numbers beyond matching number
+        const beyondNum2 = tempArray.splice(num2Index + 1);
+        // console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2);
+
+        // delete matching number from array
+        // console.log(`Delete number ${num2} from array...`);
+        tempArray.splice(num2Index, 1);
+
+        // splice all numbers beyond first number
+        const tempSlice = tempArray.splice(i + 1);
+        // console.log(`Cut and save numbers beyond ${num1}:`, tempSlice);
+
+        // remove first number and add binary numbers
+        tempArray.splice(i, 1, binaryNums[0], binaryNums[1]);
+
+        // add spliced array back to array
+        // console.log('Shuffling...');
+        tempArray = [...tempArray, ...beyondNum2, ...tempSlice];
+        // console.log('Array after shuffle:', tempArray);
+
+        return shuffleArray(tempArray, i + 2); // skip over second binary number
+    }
+
+    // no changes needed
+    return shuffleArray(tempArray, i + 1);
 };
 
 const toBinary = (array) => {
-    //console.log('Looking for matches of 10 in array...');
-    let result = array;
-    let binarySecondNumIndex = -1;
-
-    // TODO: Change to recursive?
-    for (let i = 0; i < result.length; i += 1) {
-        const num1 = result[i];
-        let matched = false;
-
-        // skip second binary number's index from a previous number match
-        if (binarySecondNumIndex === i) {
-            binarySecondNumIndex = -1;
-            continue;
-        }
-
-        for (let j = i; j < result.length; j +=1) {
-            if (i === j) continue;
-
-            if (matched) break;
-
-            const num2 = result[j];
-
-            if (num1 + num2 === 10) {
-                matched = true;
-                //console.log(`${num1} (index ${i}) and ${num2} (index ${j}) add to 10.`);
-
-                const binaryNums = num1 > num2 ? [1,0] : [0,1];
-
-                // grab all numbers beyond matching number
-                const beyondNum2 = result.splice(j + 1);
-                //console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2);
-
-                // delete matching number from array
-                //console.log(`Delete number ${num2} from array...`);
-                result.splice(j, 1);
-
-                // splice all numbers beyond first number
-                const tempSlice = result.splice(i + 1);
-                //console.log(`Cut and save numbers beyond ${num1}:`, tempSlice);
-
-                // remove first number and add binary numbers
-                result.splice(i, 1, binaryNums[0], binaryNums[1]);
-
-                // add spliced array back to array
-                //console.log('Shuffling...');
-                result = [...result, ...beyondNum2, ...tempSlice];
-
-                // save this index so we skip it next iteration
-                binarySecondNumIndex = i + 1;
-                //console.log('Array after shuffle:', result);
-            }
-        }
-
-        if (!matched) {
-            //console.log(`No match found. Keep ${num1} in Result array.`);
-        }
-    }
-
-    //console.log('Done! Result:', result);
-
-    return result;
+    return shuffleArray(array, 0);
 };
 
 const hasher = (hash) => {
@@ -134,7 +131,8 @@ const hasher = (hash) => {
     result = hashToAscii(result);
     result = splitAsciiChars(result);
     result = toMultipleOfTen(result);
-    result = shrinkToTen(result);
+    result = arrayToChunks(result);
+    result = fixArray(result);
 
     return toBinary(result);
 };
@@ -149,16 +147,15 @@ const convert = (hash) => {
 
     // keep trying
     while(binaryArray.find(num => num > 1)) {
-        //console.log(`Array is not binary yet.`);
-        //console.log('Starting over with Nonce...');
-
+        // console.log(`Array is not binary yet.`);
         const { nextHash, nextNonce } = addNonceToHash(originalHash, nonce);
         nonce = nextNonce;
 
+        // console.log(`Starting over with Nonce ${nonce}.`);
         binaryArray = hasher(nextHash);
     }
 
-    console.log('Array is binary! We found the nonce!');
+    // console.log('Array is binary! We found the nonce!');
 
     return {
         solution: binaryArray.reduce((str, val) => (str += val), ''),
