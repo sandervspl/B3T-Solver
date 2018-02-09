@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const addNonceToHash = (hash, nonce) => {
+const getNextHashAndNonce = (hash, nonce) => {
     const nextNonce = Number(nonce) + 1;
     //console.log('New nonce:', nextNonce);
 
@@ -148,7 +148,7 @@ const convert = (hash) => {
     // keep trying
     while(binaryArray.find(num => num > 1)) {
         // console.log(`Array is not binary yet.`);
-        const { nextHash, nextNonce } = addNonceToHash(originalHash, nonce);
+        const { nextHash, nextNonce } = getNextHashAndNonce(originalHash, nonce);
         nonce = nextNonce;
 
         // console.log(`Starting over with Nonce ${nonce}.`);
