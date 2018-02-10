@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { API_HOST } from './constants';
+import { API_HOST } from './secret';
 
 const request = async (options) => {
     return await fetch(`${API_HOST}/${options.path}`, options)
