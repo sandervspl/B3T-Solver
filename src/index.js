@@ -1,11 +1,16 @@
 import express from 'express';
 import moment from 'moment';
-import hasher from './convert';
+import solver from './convert';
 import * as api from './api';
 import { hash as mockHash } from './block';
 
 const app = express();
-app.set('port', 3000);
+
+if (process.version.match(/\w7/)) {
+    app.set('port', 3000);
+} else {
+    throw Error(`This app requires Node v7 (using: ${process.version}) in order to properly run. Node does not support TCO as of v8. Try installing NVM to downgrade to v7.`);
+}
 
 export const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));
 
@@ -64,7 +69,7 @@ export const addNewBlock = async (nonce) => {
 
 export const start = async () => {
     if (mockHash) {
-        const { nonce } = hasher(mockHash);
+        const { nonce } = solver(mockHash);
         console.log('Nonce:', nonce);
     } else {
         const block = await getLastBlock();
@@ -73,13 +78,13 @@ export const start = async () => {
             const hash = hashFactory('prev', block);
             console.log(`Hash is: ${hash}`);
 
-            const { solution } = hasher(hash);
+            const { solution } = solver(hash);
             console.log('Solution of last block:', solution);
 
             const newHash = solution + hashFactory('next', block);
             console.log('hash for algorithm:', newHash);
 
-            const { nonce } = hasher(newHash);
+            const { nonce } = solver(newHash);
             console.log('Nonce:', nonce);
 
             await addNewBlock(nonce);
