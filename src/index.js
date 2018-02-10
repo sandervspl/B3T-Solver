@@ -4,13 +4,12 @@ import solver from './convert';
 import * as api from './api';
 import { hash as mockHash } from './block';
 
-const app = express();
-
-if (process.version.match(/\w7/)) {
-    app.set('port', 3000);
-} else {
+if (!process.version.match(/\w7/)) {
     throw Error(`This app requires NodeJS v7 (using: ${process.version}) in order to properly run. NodeJS does not support TCO as of v8. Try installing NVM to downgrade to v7.`);
 }
+
+const app = express();
+app.set('port', 3000);
 
 export const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));
 
