@@ -1,8 +1,7 @@
 import express from 'express';
-import fetch from 'node-fetch';
 import moment from 'moment';
 import hasher from './convert';
-import { API } from './constants';
+import * as api from './api';
 import { hash as mockHash } from './block';
 
 const app = express();
@@ -44,10 +43,7 @@ export const hashFactory = (type, block) => {
 
 export const getLastBlock = async () => {
     console.log('Fetch last block from blockchain...');
-
-    const block = await fetch(`${API}/blockchain/next`)
-        .then(result => result.json())
-        .catch(err => console.error('Error!', err));
+    const block = await api.get({ path: 'blockchain/next' });
 
     // console.log('Received block:', JSON.stringify(block, null, 2));
     return block;
@@ -56,19 +52,14 @@ export const getLastBlock = async () => {
 export const addNewBlock = async (nonce) => {
     console.log('Adding new block to blockchain...');
 
-    await fetch(`${API}/blockchain`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+    await api.post({
+        path: 'blockchain',
         body: JSON.stringify({
             nonce,
             user: 'Sander, 0832970',
         }),
     })
-        .then(result => result.json())
-        .then(data => console.log('Succes!', data))
-        .catch(err => console.log('Error!', err));
+        .then(data => console.log('Succes!', data));
 };
 
 export const start = async () => {

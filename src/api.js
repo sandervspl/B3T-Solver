@@ -1,0 +1,23 @@
+import fetch from 'node-fetch';
+import { API_HOST } from './constants';
+
+const request = async (options) => {
+    return await fetch(`${API_HOST}/${options.path}`, options)
+        .then(response => response.json())
+        .catch(err => console.error('Error!', err));
+};
+
+const createRequest = (options) => {
+    return (otherOptions) => {
+        return request({
+            ...options,
+            ...otherOptions,
+        });
+    };
+};
+
+export const get = createRequest({});
+export const post = createRequest({
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+});
