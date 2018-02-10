@@ -1,14 +1,12 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-export const getNextHashAndNonce = (hash, nonce) => {
-    const nextNonce = Number(nonce) + 1;
-    //console.log('New nonce:', nextNonce);
+export const getNextNonce = (nonce) => {
+    return Number(nonce) + 1;
+};
 
-    const nextHash = hash + nextNonce;
-    //console.log('New hash:', nextHash);
-
-    return { nextHash, nextNonce };
+export const getNextHash = (originalHash, nonce) => {
+    return originalHash + nonce;
 };
 
 export const hashToAscii = (hash) => {
@@ -126,11 +124,11 @@ export const shuffleArray = (array, i) => {
     return shuffleArray(tempArray, i + 1);
 };
 
-export const toBinary = (array) => {
-    return shuffleArray(array, 0);
+export const isBinaryArray = (array) => {
+    return !array.find(num => num > 1);
 };
 
-export const hasher = (hash) => {
+export const getSolutionFromHash = (hash) => {
     let result = hash;
 
     result = hashToAscii(result);
@@ -139,37 +137,39 @@ export const hasher = (hash) => {
     result = arrayToChunks(result);
     result = fixArray(result);
 
-    return toBinary(result);
+    return shuffleArray(result, 0);
+};
+
+// FIXME: Call stack size exceeded (tail call optimization is used tho?)
+const findBinarySolution = (hash, nonce, originalHash) => {
+    const newSolution = getSolutionFromHash(hash);
+
+    if (!isBinaryArray(newSolution)) {
+        const nextNonce = getNextNonce(nonce);
+        const nextHash = getNextHash(originalHash, nextNonce);
+
+        return findBinarySolution(nextHash, nextNonce, originalHash);
+    }
+
+    return {
+        solution: newSolution.reduce((str, val) => (str += val), ''),
+        nonce,
+    };
 };
 
 export const convert = (hash) => {
     const originalHash = hash; // immutable! Do not change this var because we add a new nonce to the OG every try
-    let binaryArray;
     let nonce = -1;
 
     const mStartTime = moment();
 
-    // try to get binary result
-    binaryArray = hasher(originalHash);
-
-    // keep trying
-    while(binaryArray.find(num => num > 1)) {
-        // console.log(`Array is not binary yet.`);
-        const { nextHash, nextNonce } = getNextHashAndNonce(originalHash, nonce);
-        nonce = nextNonce;
-
-        // console.log(`Starting over with Nonce ${nonce}.`);
-        binaryArray = hasher(nextHash);
-    }
+    const solution = findBinarySolution(originalHash, nonce, originalHash);
 
     // console.log('Array is binary! We found the nonce!');
     const mSolveTime = moment.duration(moment().diff(mStartTime));
     console.log(`Solved in ${mSolveTime.milliseconds()}ms.`);
 
-    return {
-        solution: binaryArray.reduce((str, val) => (str += val), ''),
-        nonce,
-    };
+    return solution;
 };
 
 export default convert;
