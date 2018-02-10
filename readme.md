@@ -1,11 +1,9 @@
 # B3T Solver
 A CMGTCoin miner built with NodeJS.
 
-## Disclaimer
+## Usage
 
 This app requires NodeJS **v7.x.x** in order to run. v8+ does not support *Tail Call Optimization* as it was removed from the v8 engine. This project uses a lot of recursion in which it is needed to avoid Call Stack errors.
-
-## Usage
 
 ### Downgrading Node
 You can use a tool like [NVM](https://github.com/creationix/nvm) to downgrade to v7.
