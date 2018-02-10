@@ -9,7 +9,7 @@ const app = express();
 if (process.version.match(/\w7/)) {
     app.set('port', 3000);
 } else {
-    throw Error(`This app requires Node v7 (using: ${process.version}) in order to properly run. Node does not support TCO as of v8. Try installing NVM to downgrade to v7.`);
+    throw Error(`This app requires NodeJS v7 (using: ${process.version}) in order to properly run. NodeJS does not support TCO as of v8. Try installing NVM to downgrade to v7.`);
 }
 
 export const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));

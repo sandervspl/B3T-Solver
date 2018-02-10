@@ -140,7 +140,6 @@ export const getSolutionFromHash = (hash) => {
     return shuffleArray(result, 0);
 };
 
-// FIXME: Call stack size exceeded (tail call optimization is used tho?)
 const findBinarySolution = (hash, nonce, originalHash) => {
     const newSolution = getSolutionFromHash(hash);
 
@@ -158,7 +157,7 @@ const findBinarySolution = (hash, nonce, originalHash) => {
 };
 
 export const convert = (hash) => {
-    const originalHash = hash; // immutable! Do not change this var because we add a new nonce to the OG every try
+    const originalHash = hash;
     let nonce = -1;
 
     const mStartTime = moment();

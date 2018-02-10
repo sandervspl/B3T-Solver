@@ -3,7 +3,7 @@ A CMGTCoin miner built with NodeJS.
 
 ## Disclaimer
 
-This app requires Node **v7.x.x** in order to run. v8+ does not support Tail Call Optimization as it was removed from the v8 engine. This project uses a lot of recursion in which it is needed to avoid Call Stack errors.
+This app requires NodeJS **v7.x.x** in order to run. v8+ does not support *Tail Call Optimization* as it was removed from the v8 engine. This project uses a lot of recursion in which it is needed to avoid Call Stack errors.
 
 ## Usage
 
