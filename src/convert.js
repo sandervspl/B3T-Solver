@@ -24,25 +24,17 @@ export const splitAsciiChars = (ascii) => {
 
 export const toMultipleOfTen = (array) => {
     //console.log('Check if array is multiple of 10...');
-    const newArray = array;
 
-    //console.log('Cur length:', newArray.length);
+    if (array.length % 10 !== 0) {
+        const diff = 10 - array.length % 10;
+        const filler = Array.from({ length: diff }, (_, i) => i.toString());
+        const newArray = [...array, ...filler];
 
-    if (newArray.length % 10 !== 0) {
-        const diff = 10 - newArray.length % 10;
-        let i = 0;
-
-        _.times(
-            diff,
-            () => newArray.push((i++).toString())
-        );
-
-        //console.log('Added numbers. New length:', newArray.length);
-    } else {
-        //console.log('Array is multiple of 10!');
+        // console.log('Added numbers. New length:', newArray.length);
+        return newArray;
     }
 
-    return newArray;
+    return array;
 };
 
 export const arrayToChunks = (array) => {
