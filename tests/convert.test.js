@@ -4,7 +4,7 @@ import {
     toMultipleOfTen,
     arrayToChunks,
     arrayNumsToSingleDigit,
-    fixArray,
+    combineChunkArrayNumbers,
     checkForMatch,
     shuffleArray,
     isBinaryArray,
@@ -146,7 +146,7 @@ describe('convert', () => {
         });
     });
 
-    describe('fixArray()', () => {
+    describe('combineChunkArrayNumbers()', () => {
         const expectedArray = [2, 7, 6, 2, 2, 4, 5, 7, 6, 8];
         let array;
 
@@ -158,7 +158,7 @@ describe('convert', () => {
         });
 
         it('Adds all numbers per index and performs modules 10 on them', () => {
-            expect(fixArray(array)).toEqual(expectedArray);
+            expect(combineChunkArrayNumbers(array)).toEqual(expectedArray);
         });
     });
 

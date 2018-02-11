@@ -45,12 +45,28 @@ export const arrayNumsToSingleDigit = (array) => {
     return array.map((num) => num % 10);
 };
 
-export const fixArray = (arrayChunks) => {
+/*
+ * arrayChunks = [ [0,1,2], [3,4,5] ]
+ *
+ * first run example
+ * res = []
+ * array = [0,1,2]
+ *
+ * second run example
+ * res = [0,1,2]
+ * array = [3,4,5]
+ *
+ * singleArray = [3,5,7]
+ */
+export const combineChunkArrayNumbers = (arrayChunks) => {
     // add up all numbers in array from same index
     const singleArray = arrayChunks.reduce((res, array) => {
-        return array.map((char, i) => {
-            if (!res[i]) return Number(char);
-            return Number(res[i]) + Number(char);
+        return array.map((num, i) => {
+            // if result array index is empty, just add number from array to this index
+            if (!res[i]) return Number(num);
+
+            // add number from current array index to the one of the same index in result array
+            return Number(res[i]) + Number(num);
         });
     }, []);
 
@@ -127,7 +143,7 @@ export const getSolutionFromHash = (hash) => {
     result = splitAsciiChars(result);
     result = toMultipleOfTen(result);
     result = arrayToChunks(result);
-    result = fixArray(result);
+    result = combineChunkArrayNumbers(result);
 
     return shuffleArray(result, 0);
 };
