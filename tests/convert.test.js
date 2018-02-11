@@ -2,6 +2,11 @@ import {
     hashToAscii,
     splitAsciiChars,
     toMultipleOfTen,
+    arrayToChunks,
+    arrayNumsToSingleDigit,
+    fixArray,
+    checkForMatch,
+    shuffleArray,
 } from '../src/convert';
 
 describe('convert', () => {
@@ -97,6 +102,86 @@ describe('convert', () => {
                 const j = (i - offset) + '';
                 expect(num).toEqual(j);
             });
+        });
+    });
+
+    describe('arrayToChunks()', () => {
+        let array;
+
+        beforeEach(() => {
+            array = Array.from({length: 20}, (_, i) => i);
+        });
+
+        it('Makes two chunks of 10 arrays from an array of length 20', () => {
+            expect(arrayToChunks(array).length).toEqual(2);
+        });
+    });
+
+    describe('arrayNumsToSingleDigit()', () => {
+        let array;
+
+        beforeEach(() => {
+            array = ['10', '1', '20', '5'];
+        });
+
+        it('Correctly transforms non-single digits in an array to single digit numbers', () => {
+            expect(!!arrayNumsToSingleDigit(array).find(num => num >= 10)).toBe(false);
+        });
+
+        it('Turns the digits to numbers in the array', () => {
+            expect(arrayNumsToSingleDigit(array).forEach((num) => {
+                expect(typeof num === 'number').toBe(true);
+            }))
+        });
+    });
+
+    describe('fixArray()', () => {
+        const expectedArray = [2, 7, 6, 2, 2, 4, 5, 7, 6, 8];
+        let array;
+
+        beforeEach(() => {
+            array = [
+                [1, 1, 6, 1, 0, 1, 1, 2, 0, 1],
+                [1, 6, 0, 1, 2, 3, 4, 5, 6, 7],
+            ];
+        });
+
+        it('Adds all numbers per index and performs modules 10 on them', () => {
+            expect(fixArray(array)).toEqual(expectedArray);
+        });
+    });
+
+    describe('checkForMatch()', () => {
+        let array;
+
+        beforeEach(() => {
+            array = Array.from({ length: 20 }, (_, i) => i);
+        });
+
+        it('Returns false on empty array', () => {
+            array = [];
+            expect(checkForMatch(array, 0, 0)).toBe(false);
+        });
+
+        it('Finds the correct match for number 1 to equal 10', () => {
+            expect(checkForMatch(array, array[1], 2)).toEqual(9);
+        });
+
+        it('Does not find a match for the number 5', () => {
+            expect(checkForMatch(array, array[5], 6)).toBe(false);
+        });
+    });
+
+    describe('shuffleArray()', () => {
+        let array;
+        const expectedArray = [0, 1, 7, 1, 0, 5, 7, 6, 2, 2];
+
+        beforeEach(() => {
+            array = [2, 7, 6, 2, 2, 4, 5, 7, 6, 8];
+        });
+
+        it('Correctly shuffles the array for hash "text"', () => {
+            expect(shuffleArray(array, 0)).toEqual(expectedArray);
         });
     });
 });
