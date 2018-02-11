@@ -132,7 +132,7 @@ export const getSolutionFromHash = (hash) => {
     return shuffleArray(result, 0);
 };
 
-const findBinarySolution = (hash, nonce, originalHash) => {
+export const findBinarySolution = (hash, nonce, originalHash) => {
     const newSolution = getSolutionFromHash(hash);
 
     if (!isBinaryArray(newSolution)) {

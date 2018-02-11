@@ -68,8 +68,9 @@ export const addNewBlock = async (nonce) => {
 
 export const start = async () => {
     if (mockHash) {
-        const { nonce } = solver(mockHash);
+        const { nonce, solution } = solver(mockHash);
         console.log('Nonce:', nonce);
+        console.log('Solution:', solution);
     } else {
         const block = await getLastBlock();
 

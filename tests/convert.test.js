@@ -7,6 +7,12 @@ import {
     fixArray,
     checkForMatch,
     shuffleArray,
+    isBinaryArray,
+    getSolutionFromHash,
+    findBinarySolution,
+    convert,
+    getNextHash,
+    getNextNonce,
 } from '../src/convert';
 
 describe('convert', () => {
@@ -182,6 +188,59 @@ describe('convert', () => {
 
         it('Correctly shuffles the array for hash "text"', () => {
             expect(shuffleArray(array, 0)).toEqual(expectedArray);
+        });
+    });
+
+    describe('isBinaryArray()', () => {
+        let array;
+
+        it('Returns false if not all numbers in an array are 0 or 1', () => {
+            array = [0, 1, 7, 1, 0, 5, 7, 6, 2, 2];
+            expect(isBinaryArray(array)).toBe(false);
+        });
+
+        it('Returns true if all numbers in an array are 0 or 1', () => {
+            array = [0, 1, 1, 1, 0, 0, 1, 1, 0, 0];
+            expect(isBinaryArray(array)).toBe(true);
+        });
+    });
+
+    describe('getSolutionFromHash()', () => {
+        it('Returns the correct array from hash "text"', () => {
+            const expectedArray = [0, 1, 7, 1, 0, 5, 7, 6, 2, 2];
+            expect(getSolutionFromHash(hash)).toEqual(expectedArray);
+        });
+    });
+
+    describe('findBinarySolution()', () => {
+        it('Returns the correct binary and nonce from hash "text"', () => {
+            const { nonce, solution } = findBinarySolution(hash, -1, hash);
+
+            expect(nonce).toEqual(2067);
+            expect(solution).toEqual('0111010011');
+        });
+    });
+
+    describe('convert()', () => {
+        it('Returns the correct binary and nonce from hash "text"', () => {
+            const { nonce, solution } = convert(hash);
+
+            expect(nonce).toEqual(2067);
+            expect(solution).toEqual('0111010011');
+        });
+    });
+
+    describe('getNextHash()', () => {
+        it('Adds nonce number to hash string', () => {
+            const nonce = 2067;
+            expect(getNextHash(hash, nonce)).toEqual('text2067');
+        });
+    });
+
+    describe('getNextNonce()', () => {
+        it('Adds up nonce by one', () => {
+            const nonce = 0;
+            expect(getNextNonce(nonce)).toEqual(1);
         });
     });
 });
