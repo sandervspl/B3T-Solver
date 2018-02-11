@@ -10,15 +10,15 @@ You can use a tool like [NVM](https://github.com/creationix/nvm) to downgrade to
 
 To downgrade to v7 with NVM
 
-```nvm use 7```
+    $ nvm use 7
 
 ### Installing
-```npm i```
+    $ npm i
 
 To run the development server
 
-```npm run dev```
+    $ npm run dev
 
 To run tests
 
-```npm run test:watch```
+    $ npm run test:watch
