@@ -95,7 +95,7 @@ describe('convert', () => {
             array = ['0', '1', '2', '3'];
         });
 
-        it('Adds digits to an array until it is a multiple of ten', () => {
+        it('Adds digits to an array until it is a multiple of 10', () => {
             expect(toMultipleOfTen(array).length % 10).toEqual(0);
         });
 
@@ -108,6 +108,11 @@ describe('convert', () => {
                 const j = (i - offset) + '';
                 expect(num).toEqual(j);
             });
+        });
+
+        it('Returns the array if it is already a multiple of 10', () => {
+            array = Array.from({ length: 10 }, (_, i) => i.toString());
+            expect(toMultipleOfTen(array)).toEqual(array);
         });
     });
 
