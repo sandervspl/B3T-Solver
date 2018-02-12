@@ -17,6 +17,7 @@
         "express": "^4.16.2",
         "lodash": "^4.17.5",
         "moment": "^2.20.1",
+        "node": "^7.10.1",
         "node-fetch": "^2.0.0"
     },
     "devDependencies": {
