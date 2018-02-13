@@ -91,7 +91,7 @@ export const checkForMatch = (array, num, i) => {
     return checkForMatch(array, num, i + 1);
 };
 
-export const shuffleArray = (array, i) => {
+export const shuffleArray = (array, i = 0) => {
     const num1 = array[i];
 
     // done!
@@ -137,17 +137,14 @@ export const isBinaryArray = (array) => {
     return !array.find(num => num > 1);
 };
 
-export const getSolutionFromHash = (hash) => {
-    const result = _.flow(
-        hashToAscii,
-        splitAsciiChars,
-        toMultipleOfTen,
-        arrayToChunks,
-        combineChunkArrayNumbers,
-    )(hash);
-
-    return shuffleArray(result, 0);
-};
+export const getSolutionFromHash = _.flow(
+    hashToAscii,
+    splitAsciiChars,
+    toMultipleOfTen,
+    arrayToChunks,
+    combineChunkArrayNumbers,
+    shuffleArray,
+);
 
 export const findBinarySolution = (hash, nonce, originalHash = hash) => {
     const newSolution = getSolutionFromHash(hash);
