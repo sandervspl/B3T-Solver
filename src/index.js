@@ -16,29 +16,29 @@ export const hashFactory = (type, block) => {
     switch(type) {
         case 'prev': {
             const { blockchain } = block;
-            const data = {
-                hash: blockchain.hash,
-                from: blockchain.data[0].from,
-                to: blockchain.data[0].to,
-                amount: blockchain.data[0].amount,
-                timestamp1: blockchain.data[0].timestamp,
-                timestamp2: blockchain.timestamp,
-                nonce: blockchain.nonce,
-            };
+            const data = [
+                blockchain.hash,
+                blockchain.data[0].from,
+                blockchain.data[0].to,
+                blockchain.data[0].amount,
+                blockchain.data[0].timestamp,
+                blockchain.timestamp,
+                blockchain.nonce,
+            ];
 
-            return createHash(Object.values(data));
+            return createHash(data);
         }
         case 'next': {
             const { transactions, timestamp } = block;
-            const data = {
-                from: transactions[0].from,
-                to: transactions[0].to,
-                amount: transactions[0].amount,
-                timestamp1: transactions[0].timestamp,
-                timestamp2: timestamp,
-            };
+            const data = [
+                transactions[0].from,
+                transactions[0].to,
+                transactions[0].amount,
+                transactions[0].timestamp,
+                timestamp,
+            ];
 
-            return createHash(Object.values(data));
+            return createHash(data);
         }
         default: return console.log('Invalid hash type supplied to hashFactory');
     }
