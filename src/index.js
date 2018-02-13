@@ -40,7 +40,7 @@ export const hashFactory = (type, block) => {
 
             return createHash(data);
         }
-        default: return console.log('Invalid hash type supplied to hashFactory');
+        default: return console.error('Invalid hash type supplied to hashFactory');
     }
 };
 
@@ -55,14 +55,13 @@ export const getLastBlock = async () => {
 export const addNewBlock = async (nonce) => {
     console.log('Adding new block to blockchain...');
 
-    await api.post({
+    return await api.post({
         path: 'blockchain',
         body: JSON.stringify({
             nonce,
             user: 'Sander, 0832970',
         }),
-    })
-        .then(data => console.log('Succes!', data));
+    });
 };
 
 export const start = async () => {
@@ -86,7 +85,8 @@ export const start = async () => {
             const { nonce } = solver(newHash);
             console.log('Nonce:', nonce);
 
-            await addNewBlock(nonce);
+            await addNewBlock(nonce)
+                .then(data => console.log('Succes!', data));
         } else {
             const time = moment.duration(block.countdown);
             console.log(`Block is closed for ${time.minutes()}:${time.seconds()} minutes.`);

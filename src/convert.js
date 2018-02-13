@@ -138,18 +138,13 @@ export const isBinaryArray = (array) => {
 };
 
 export const getSolutionFromHash = (hash) => {
-    let result = hash;
-
-    // 👍
-    result = combineChunkArrayNumbers(
-        arrayToChunks(
-            toMultipleOfTen(
-                splitAsciiChars(
-                    hashToAscii(result)
-                )
-            )
-        )
-    );
+    const result = _.flowRight(
+        combineChunkArrayNumbers,
+        arrayToChunks,
+        toMultipleOfTen,
+        splitAsciiChars,
+        hashToAscii,
+    )(hash);
 
     return shuffleArray(result, 0);
 };
