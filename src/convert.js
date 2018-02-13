@@ -139,16 +139,21 @@ export const isBinaryArray = (array) => {
 export const getSolutionFromHash = (hash) => {
     let result = hash;
 
-    result = hashToAscii(result);
-    result = splitAsciiChars(result);
-    result = toMultipleOfTen(result);
-    result = arrayToChunks(result);
-    result = combineChunkArrayNumbers(result);
+    // 👍
+    result = combineChunkArrayNumbers(
+        arrayToChunks(
+            toMultipleOfTen(
+                splitAsciiChars(
+                    hashToAscii(result)
+                )
+            )
+        )
+    );
 
     return shuffleArray(result, 0);
 };
 
-export const findBinarySolution = (hash, nonce, originalHash) => {
+export const findBinarySolution = (hash, nonce, originalHash = hash) => {
     const newSolution = getSolutionFromHash(hash);
 
     if (!isBinaryArray(newSolution)) {
@@ -170,7 +175,7 @@ export const convert = (hash) => {
 
     const mStartTime = moment();
 
-    const solution = findBinarySolution(originalHash, nonce, originalHash);
+    const solution = findBinarySolution(originalHash, nonce);
 
     // console.log('Array is binary! We found the nonce!');
     const mSolveTime = moment.duration(moment().diff(mStartTime));

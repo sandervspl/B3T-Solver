@@ -99,4 +99,3 @@ app.listen(app.get('port'), async () => {
     console.log(`Server started on port ${app.get('port')}`);
     await start();
 });
-
