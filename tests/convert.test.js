@@ -110,7 +110,7 @@ describe('convert', () => {
             });
         });
 
-        it('Returns the array if it is already a multiple of 10', () => {
+        it('Returns the original array if it is already a multiple of 10', () => {
             array = Array.from({ length: 10 }, (_, i) => i.toString());
             expect(toMultipleOfTen(array)).toEqual(array);
         });
@@ -123,7 +123,7 @@ describe('convert', () => {
             array = Array.from({length: 20}, (_, i) => i);
         });
 
-        it('Makes two chunks of 10 arrays from an array of length 20', () => {
+        it('Makes two chunks of arrays with length 10 from an array of length 20', () => {
             expect(arrayToChunks(array).length).toEqual(2);
         });
     });
@@ -135,11 +135,11 @@ describe('convert', () => {
             array = ['10', '1', '20', '5'];
         });
 
-        it('Correctly transforms non-single digits in an array to single digit numbers', () => {
+        it('Correctly transforms multi digits in an array to single digit numbers', () => {
             expect(!!arrayNumsToSingleDigit(array).find(num => num >= 10)).toBe(false);
         });
 
-        it('Turns the digits to numbers in the array', () => {
+        it('Turns the digits to type number in the array', () => {
             expect(arrayNumsToSingleDigit(array).forEach((num) => {
                 expect(typeof num).toEqual('number');
             }));
@@ -157,7 +157,7 @@ describe('convert', () => {
             ];
         });
 
-        it('Adds all numbers per index and performs modules 10 on them', () => {
+        it('Adds all numbers per index and performs modulus 10 on them', () => {
             expect(combineChunkArrayNumbers(array)).toEqual(expectedArray);
         });
     });
@@ -174,7 +174,7 @@ describe('convert', () => {
             expect(checkForMatch(array, 0, 0)).toBe(false);
         });
 
-        it('Finds the correct match for number 1 to equal 10', () => {
+        it('Finds a matching number to equal 10', () => {
             expect(checkForMatch(array, array[1], 2)).toEqual(9);
         });
 
@@ -191,7 +191,7 @@ describe('convert', () => {
             array = [2, 7, 6, 2, 2, 4, 5, 7, 6, 8];
         });
 
-        it('Correctly shuffles the array for hash "text"', () => {
+        it('Shuffles the array according to the algorithm', () => {
             expect(shuffleArray(array, 0)).toEqual(expectedArray);
         });
     });
@@ -243,7 +243,7 @@ describe('convert', () => {
     });
 
     describe('getNextNonce()', () => {
-        it('Adds up nonce by one', () => {
+        it('Adds up nonce number by one', () => {
             const nonce = 0;
             expect(getNextNonce(nonce)).toEqual(1);
         });
