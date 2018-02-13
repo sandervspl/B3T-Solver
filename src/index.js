@@ -2,6 +2,7 @@ import express from 'express';
 import moment from 'moment';
 import solver from './convert';
 import * as api from './api';
+import { createHash } from './helpers';
 import { hash as mockHash } from './block';
 
 if (!process.version.match(/\w7/)) {
@@ -10,8 +11,6 @@ if (!process.version.match(/\w7/)) {
 
 const app = express();
 app.set('port', 3000);
-
-export const createHash = (data) => Object.values(data).reduce((str, val) => (str += val));
 
 export const hashFactory = (type, block) => {
     switch(type) {
@@ -27,7 +26,7 @@ export const hashFactory = (type, block) => {
                 nonce: blockchain.nonce,
             };
 
-            return createHash(data);
+            return createHash(Object.values(data));
         }
         case 'next': {
             const { transactions, timestamp } = block;
@@ -39,7 +38,7 @@ export const hashFactory = (type, block) => {
                 timestamp2: timestamp,
             };
 
-            return createHash(data);
+            return createHash(Object.values(data));
         }
         default: return console.log('Invalid hash type supplied to hashFactory');
     }

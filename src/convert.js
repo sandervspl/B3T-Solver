@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+import { createHash } from './helpers';
 
 export const getNextNonce = (nonce) => {
     return Number(nonce) + 1;
@@ -164,7 +165,7 @@ export const findBinarySolution = (hash, nonce, originalHash = hash) => {
     }
 
     return {
-        solution: newSolution.reduce((str, val) => (str += val), ''),
+        solution: createHash(newSolution),
         nonce,
     };
 };
