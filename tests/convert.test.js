@@ -39,7 +39,7 @@ describe('convert', () => {
             const asciiArray = hashToAscii(hash);
 
             asciiArray.forEach((num) => {
-                expect(typeof num === 'string').toBe(true);
+                expect(typeof num).toEqual('string');
             });
         });
 
@@ -66,7 +66,7 @@ describe('convert', () => {
 
         it('Returns an array of strings', () => {
             splitArray.forEach((str) => {
-                expect(typeof str === 'string').toBe(true);
+                expect(typeof str).toEqual('string');
             });
         });
 
@@ -141,8 +141,8 @@ describe('convert', () => {
 
         it('Turns the digits to numbers in the array', () => {
             expect(arrayNumsToSingleDigit(array).forEach((num) => {
-                expect(typeof num === 'number').toBe(true);
-            }))
+                expect(typeof num).toEqual('number');
+            }));
         });
     });
 
