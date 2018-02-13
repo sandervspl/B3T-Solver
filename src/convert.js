@@ -1,50 +1,50 @@
-import _ from 'lodash';
-import moment from 'moment';
-import { createHash } from './helpers';
+import _ from 'lodash'
+import moment from 'moment'
+import { createHash } from './helpers'
 
 export const getNextNonce = (nonce) => {
-    return Number(nonce) + 1;
-};
+    return Number(nonce) + 1
+}
 
 export const getNextHash = (originalHash, nonce) => {
-    return originalHash + nonce;
-};
+    return originalHash + nonce
+}
 
 export const hashToAscii = (hash) => {
-    //console.log('Turn hash into ASCII...');
+    //console.log('Turn hash into ASCII...')
     return hash
         .replace(/\s+/g, '')
         .split('')
-        .map(char => isNaN(char) ? char.charCodeAt(0).toString() : char);
-};
+        .map(char => isNaN(char) ? char.charCodeAt(0).toString() : char)
+}
 
 export const splitAsciiChars = (ascii) => {
-    //console.log('Split ASCII characters to singles...');
-    return _.flatten(ascii.map(char => char.split('')));
-};
+    //console.log('Split ASCII characters to singles...')
+    return _.flatten(ascii.map(char => char.split('')))
+}
 
 export const toMultipleOfTen = (array) => {
-    //console.log('Check if array is multiple of 10...');
+    //console.log('Check if array is multiple of 10...')
 
     if (array.length % 10 !== 0) {
-        const diff = 10 - array.length % 10;
-        const filler = Array.from({ length: diff }, (_, i) => i.toString());
-        const newArray = [...array, ...filler];
+        const diff = 10 - array.length % 10
+        const filler = Array.from({ length: diff }, (_, i) => i.toString())
+        const newArray = [...array, ...filler]
 
-        // console.log('Added numbers. New length:', newArray.length);
-        return newArray;
+        // console.log('Added numbers. New length:', newArray.length)
+        return newArray
     }
 
-    return array;
-};
+    return array
+}
 
 export const arrayToChunks = (array) => {
-    return _.chunk(array, 10);
-};
+    return _.chunk(array, 10)
+}
 
 export const arrayNumsToSingleDigit = (array) => {
-    return array.map((num) => num % 10);
-};
+    return array.map((num) => num % 10)
+}
 
 /*
  * arrayChunks = [ [0,1,2], [3,4,5] ]
@@ -64,78 +64,78 @@ export const combineChunkArrayNumbers = (arrayChunks) => {
     const singleArray = arrayChunks.reduce((res, array) => {
         return array.map((num, i) => {
             // if result array index is empty, just add number from array to this index
-            if (!res[i]) return Number(num);
+            if (!res[i]) return Number(num)
 
             // add number from current array index to the one of the same index in result array
-            return Number(res[i]) + Number(num);
-        });
-    }, []);
+            return Number(res[i]) + Number(num)
+        })
+    }, [])
 
-    //console.log('After adding all array numbers:', singleArray);
-    return arrayNumsToSingleDigit(singleArray);
-};
+    //console.log('After adding all array numbers:', singleArray)
+    return arrayNumsToSingleDigit(singleArray)
+}
 
 export const checkForMatch = (array, num, i) => {
     if (array[i] === undefined) {
-        // console.log('No match found. Returning', num);
-        return false;
+        // console.log('No match found. Returning', num)
+        return false
     }
 
-    // console.log(`Matching ${num} and ${array[i]}...`);
+    // console.log(`Matching ${num} and ${array[i]}...`)
     if (num + array[i] === 10) {
-        // console.log('Found match', i);
-        return i;
+        // console.log('Found match', i)
+        return i
     }
 
-    // console.log('Check again');
-    return checkForMatch(array, num, i + 1);
-};
+    // console.log('Check again')
+    return checkForMatch(array, num, i + 1)
+}
 
 export const shuffleArray = (array, i = 0) => {
-    const num1 = array[i];
+    const num1 = array[i]
 
     // done!
-    if (num1 === undefined) return array;
+    if (num1 === undefined) return array
 
-    let tempArray = array;
+    let tempArray = array
 
-    // console.log('Match numbers from array', tempArray);
-    const num2Index = checkForMatch(tempArray, num1, i + 1);
+    // console.log('Match numbers from array', tempArray)
+    const num2Index = checkForMatch(tempArray, num1, i + 1)
 
     if (num2Index) {
-        const num2 = tempArray[num2Index];
-        const binaryNums = num1 > num2 ? [1, 0] : [0, 1];
+        const num2 = tempArray[num2Index]
+        const binaryNums = num1 > num2 ? [1, 0] : [0, 1]
 
         // grab all numbers beyond matching number
-        const beyondNum2 = tempArray.splice(num2Index + 1);
-        // console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2);
+        const beyondNum2 = tempArray.splice(num2Index + 1)
+        // console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2)
 
         // delete matching number from array
-        // console.log(`Delete number ${num2} from array...`);
-        tempArray.splice(num2Index, 1);
+        // console.log(`Delete number ${num2} from array...`)
+        tempArray.splice(num2Index, 1)
 
         // splice all numbers beyond first number
-        const tempSlice = tempArray.splice(i + 1);
-        // console.log(`Cut and save numbers beyond ${num1}:`, tempSlice);
+        const tempSlice = tempArray.splice(i + 1)
+        // console.log(`Cut and save numbers beyond ${num1}:`, tempSlice)
 
         // remove first number and add binary numbers
-        tempArray.splice(i, 1, binaryNums[0], binaryNums[1]);
+        tempArray.splice(i, 1, binaryNums[0], binaryNums[1])
 
         // add spliced array back to array
-        // console.log('Shuffling...');
-        tempArray = [...tempArray, ...beyondNum2, ...tempSlice];
-        // console.log('Array after shuffle:', tempArray);
+        // console.log('Shuffling...')
+        tempArray = [...tempArray, ...beyondNum2, ...tempSlice]
+        // console.log('Array after shuffle:', tempArray)
 
-        return shuffleArray(tempArray, i + 2); // skip over second binary number
+        return shuffleArray(tempArray, i + 2) // skip over second binary number
     }
 
     // no changes needed
-    return shuffleArray(tempArray, i + 1);
-};
+    return shuffleArray(tempArray, i + 1)
+}
 
 export const isBinaryArray = (array) => {
-    return !array.find(num => num > 1);
-};
+    return !array.find(num => num > 1)
+}
 
 export const getSolutionFromHash = _.flow(
     hashToAscii,
@@ -144,37 +144,37 @@ export const getSolutionFromHash = _.flow(
     arrayToChunks,
     combineChunkArrayNumbers,
     shuffleArray,
-);
+)
 
 export const findBinarySolution = (hash, nonce, originalHash = hash) => {
-    const newSolution = getSolutionFromHash(hash);
+    const newSolution = getSolutionFromHash(hash)
 
     if (!isBinaryArray(newSolution)) {
-        const nextNonce = getNextNonce(nonce);
-        const nextHash = getNextHash(originalHash, nextNonce);
+        const nextNonce = getNextNonce(nonce)
+        const nextHash = getNextHash(originalHash, nextNonce)
 
-        return findBinarySolution(nextHash, nextNonce, originalHash);
+        return findBinarySolution(nextHash, nextNonce, originalHash)
     }
 
     return {
         solution: createHash(newSolution),
         nonce,
-    };
-};
+    }
+}
 
 export const convert = (hash) => {
-    const originalHash = hash;
-    let nonce = -1;
+    const originalHash = hash
+    let nonce = -1
 
-    const mStartTime = moment();
+    const mStartTime = moment()
 
-    const solution = findBinarySolution(originalHash, nonce);
+    const solution = findBinarySolution(originalHash, nonce)
 
-    // console.log('Array is binary! We found the nonce!');
-    const mSolveTime = moment.duration(moment().diff(mStartTime));
-    console.log(`Solved in ${mSolveTime.milliseconds()}ms.`);
+    // console.log('Array is binary! We found the nonce!')
+    const mSolveTime = moment.duration(moment().diff(mStartTime))
+    console.log(`Solved in ${mSolveTime.milliseconds()}ms.`)
 
-    return solution;
-};
+    return solution
+}
 
-export default convert;
+export default convert
