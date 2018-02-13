@@ -138,12 +138,12 @@ export const isBinaryArray = (array) => {
 };
 
 export const getSolutionFromHash = (hash) => {
-    const result = _.flowRight(
-        combineChunkArrayNumbers,
-        arrayToChunks,
-        toMultipleOfTen,
-        splitAsciiChars,
+    const result = _.flow(
         hashToAscii,
+        splitAsciiChars,
+        toMultipleOfTen,
+        arrayToChunks,
+        combineChunkArrayNumbers,
     )(hash);
 
     return shuffleArray(result, 0);
