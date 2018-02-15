@@ -135,7 +135,6 @@ export const getValidHashArray = _.flow(
 
 export const findBinarySolution = (hashArray, nonce, originalArray = hashArray) => {
     const nextArray = getValidHashArray(hashArray)
-
     const newSolution = shuffleArray(nextArray)
 
     if (!isBinaryArray(newSolution)) {

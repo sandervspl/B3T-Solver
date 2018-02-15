@@ -8,7 +8,8 @@ import {
     checkForMatch,
     shuffleArray,
     isBinaryArray,
-    getSolutionFromHash,
+    hashToAsciiChars,
+    getValidHashArray,
     findBinarySolution,
     convert,
     getNextHash,
@@ -242,6 +243,20 @@ describe('convert', () => {
         it('Adds up nonce number by one', () => {
             const nonce = 0
             expect(getNextNonce(nonce)).toEqual(1)
+        })
+    })
+
+    describe('hashToAsciiChars()', () => {
+        it('Returns the correct ascii chars in an array from a string', () => {
+            const expectedValue = originalHashArray.map(n => n.toString())
+            expect(hashToAsciiChars(hash)).toEqual(expectedValue)
+        })
+    })
+
+    describe('getValidHashArray()', () => {
+        it('Returns a valid hash array', () => {
+            const asciiArray = originalHashArray.map(n => n.toString())
+            expect(getValidHashArray(asciiArray)).toEqual([2, 7, 6, 2, 2, 4, 5, 7, 6, 8])
         })
     })
 })
