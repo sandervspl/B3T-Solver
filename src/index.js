@@ -9,9 +9,6 @@ if (!process.version.match(/\w7/)) {
     throw Error(`This app requires NodeJS v7 (using: ${process.version}) in order to properly run. NodeJS does not support TCO as of v8. Try installing NVM to downgrade to v7.`)
 }
 
-const app = express()
-app.set('port', 3000)
-
 export const hashFactory = (type, block) => {
     switch(type) {
         case 'prev': {
@@ -94,7 +91,12 @@ export const start = async () => {
     }
 }
 
-app.listen(app.get('port'), async () => {
-    console.log(`Server started on port ${app.get('port')}`)
-    await start()
-})
+if (process.env.NODE_ENV !== 'test') {
+    const app = express()
+    app.set('port', 3000)
+
+    app.listen(app.get('port'), async () => {
+        console.log(`Server started on port ${app.get('port')}`)
+        await start()
+    })
+}

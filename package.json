@@ -9,7 +9,7 @@
         "start": "node dist/index.js",
         "build": "webpack -p --progress --colors --config webpack.config.prod.js",
         "dev": "nodemon src/index.js --exec babel-node --presets env,stage-0 --harmony_tailcalls",
-        "test": "clear && jest ./tests/*.test.js",
+        "test": "clear && jest ./tests/*.test.js --verbose",
         "test:watch": "npm test -- --watch",
         "test:cov": "npm test -- --coverage"
     },
