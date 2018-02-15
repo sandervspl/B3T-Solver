@@ -3,15 +3,19 @@ import moment from 'moment'
 import { createHash } from './helpers'
 
 export const getNextNonce = (nonce) => {
-    return Number(nonce) + 1
+    return nonce + 1
 }
 
 export const getNextHash = (originalHash, nonce) => {
-    return originalHash + nonce
+    const splitNonce = nonce
+        .toString()
+        .split('')
+        .map(n => Number(n))
+
+    return [...originalHash, ...splitNonce]
 }
 
 export const hashToAscii = (hash) => {
-    //console.log('Turn hash into ASCII...')
     return hash
         .replace(/\s+/g, '')
         .split('')
@@ -19,20 +23,15 @@ export const hashToAscii = (hash) => {
 }
 
 export const splitAsciiChars = (ascii) => {
-    //console.log('Split ASCII characters to singles...')
     return _.flatten(ascii.map(char => char.split('')))
 }
 
 export const toMultipleOfTen = (array) => {
-    //console.log('Check if array is multiple of 10...')
-
     if (array.length % 10 !== 0) {
         const diff = 10 - array.length % 10
         const filler = Array.from({ length: diff }, (_, i) => i.toString())
-        const newArray = [...array, ...filler]
 
-        // console.log('Added numbers. New length:', newArray.length)
-        return newArray
+        return [...array, ...filler]
     }
 
     return array
@@ -71,23 +70,18 @@ export const combineChunkArrayNumbers = (arrayChunks) => {
         })
     }, [])
 
-    //console.log('After adding all array numbers:', singleArray)
     return arrayNumsToSingleDigit(singleArray)
 }
 
 export const checkForMatch = (array, num, i) => {
     if (array[i] === undefined) {
-        // console.log('No match found. Returning', num)
         return false
     }
 
-    // console.log(`Matching ${num} and ${array[i]}...`)
     if (num + array[i] === 10) {
-        // console.log('Found match', i)
         return i
     }
 
-    // console.log('Check again')
     return checkForMatch(array, num, i + 1)
 }
 
@@ -95,36 +89,32 @@ export const shuffleArray = (array, i = 0) => {
     const num1 = array[i]
 
     // done!
-    if (num1 === undefined) return array
+    if (num1 === undefined) {
+        return array
+    }
 
-    let tempArray = array
+    // do not temper with the original array by spreading the values into a new array
+    let tempArray = [...array]
 
-    // console.log('Match numbers from array', tempArray)
     const num2Index = checkForMatch(tempArray, num1, i + 1)
 
     if (num2Index) {
         const num2 = tempArray[num2Index]
         const binaryNums = num1 > num2 ? [1, 0] : [0, 1]
 
-        // grab all numbers beyond matching number
         const beyondNum2 = tempArray.splice(num2Index + 1)
-        // console.log(`Cut and save numbers beyond ${num2}:`, beyondNum2)
 
         // delete matching number from array
-        // console.log(`Delete number ${num2} from array...`)
         tempArray.splice(num2Index, 1)
 
         // splice all numbers beyond first number
-        const tempSlice = tempArray.splice(i + 1)
-        // console.log(`Cut and save numbers beyond ${num1}:`, tempSlice)
+        const tempSplice = tempArray.splice(i + 1)
 
         // remove first number and add binary numbers
         tempArray.splice(i, 1, binaryNums[0], binaryNums[1])
 
         // add spliced array back to array
-        // console.log('Shuffling...')
-        tempArray = [...tempArray, ...beyondNum2, ...tempSlice]
-        // console.log('Array after shuffle:', tempArray)
+        tempArray = [...tempArray, ...beyondNum2, ...tempSplice]
 
         return shuffleArray(tempArray, i + 2) // skip over second binary number
     }
@@ -137,23 +127,22 @@ export const isBinaryArray = (array) => {
     return !array.find(num => num > 1)
 }
 
-export const getSolutionFromHash = _.flow(
-    hashToAscii,
-    splitAsciiChars,
+export const getValidHashArray = _.flow(
     toMultipleOfTen,
     arrayToChunks,
     combineChunkArrayNumbers,
-    shuffleArray,
 )
 
-export const findBinarySolution = (hash, nonce, originalHash = hash) => {
-    const newSolution = getSolutionFromHash(hash)
+export const findBinarySolution = (hashArray, nonce, originalArray = hashArray) => {
+    const nextArray = getValidHashArray(hashArray)
+
+    const newSolution = shuffleArray(nextArray)
 
     if (!isBinaryArray(newSolution)) {
         const nextNonce = getNextNonce(nonce)
-        const nextHash = getNextHash(originalHash, nextNonce)
+        const nextHash = getNextHash(originalArray, nextNonce)
 
-        return findBinarySolution(nextHash, nextNonce, originalHash)
+        return findBinarySolution(nextHash, nextNonce, originalArray)
     }
 
     return {
@@ -162,15 +151,19 @@ export const findBinarySolution = (hash, nonce, originalHash = hash) => {
     }
 }
 
+export const hashToAsciiChars = _.flow(
+    hashToAscii,
+    splitAsciiChars,
+)
+
 export const convert = (hash) => {
-    const originalHash = hash
     let nonce = -1
 
     const mStartTime = moment()
 
-    const solution = findBinarySolution(originalHash, nonce)
+    const originalArray = hashToAsciiChars(hash)
+    const solution = findBinarySolution(originalArray, nonce)
 
-    // console.log('Array is binary! We found the nonce!')
     const mSolveTime = moment.duration(moment().diff(mStartTime))
     console.log(`Solved in ${mSolveTime.milliseconds()}ms.`)
 

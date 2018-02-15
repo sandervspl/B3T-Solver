@@ -17,6 +17,7 @@ import {
 
 describe('convert', () => {
     let hash
+    let originalHashArray
 
     const compareArrays = (a1, a2) => {
         a1.forEach((num, i) => {
@@ -26,6 +27,7 @@ describe('convert', () => {
 
     beforeEach(() => {
         hash = 'text'
+        originalHashArray = [1, 1, 6, 1, 0, 1, 1, 2, 0, 1, 1, 6]
     })
 
     describe('hashToAscii()', () => {
@@ -210,16 +212,9 @@ describe('convert', () => {
         })
     })
 
-    describe('getSolutionFromHash()', () => {
-        it('Returns the correct array from hash "text"', () => {
-            const expectedArray = [0, 1, 7, 1, 0, 5, 7, 6, 2, 2]
-            expect(getSolutionFromHash(hash)).toEqual(expectedArray)
-        })
-    })
-
     describe('findBinarySolution()', () => {
         it('Returns the correct binary and nonce from hash "text"', () => {
-            const { nonce, solution } = findBinarySolution(hash, -1, hash)
+            const { nonce, solution } = findBinarySolution(originalHashArray, -1)
 
             expect(nonce).toEqual(2067)
             expect(solution).toEqual('0111010011')
@@ -238,7 +233,8 @@ describe('convert', () => {
     describe('getNextHash()', () => {
         it('Adds nonce number to hash string', () => {
             const nonce = 2067
-            expect(getNextHash(hash, nonce)).toEqual('text2067')
+            const nextHash = [1, 1, 6, 1, 0, 1, 1, 2, 0, 1, 1, 6, 2, 0, 6, 7];
+            expect(getNextHash(originalHashArray, nonce)).toEqual(nextHash)
         })
     })
 
