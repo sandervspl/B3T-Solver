@@ -1,5 +1,5 @@
 # B3T Solver
-A CMGTCoin miner built with NodeJS.
+A CMGTCoin miner built with NodeJS and using the functional programming pattern.
 
 ## Usage
 
