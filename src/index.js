@@ -56,7 +56,7 @@ export const addNewBlock = async (nonce) => {
         path: 'blockchain',
         body: JSON.stringify({
             nonce,
-            user: 'Sander, 0832970',
+            user: 'Sander 0832970',
         }),
     })
 }

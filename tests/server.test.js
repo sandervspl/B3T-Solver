@@ -1,7 +1,9 @@
 import { createHash } from '../src/helpers'
 import {
-    getLastBlock,
     hashFactory,
+    getLastBlock,
+    addNewBlock,
+    start,
 } from '../src';
 
 jest.mock('../src/api')
@@ -26,6 +28,7 @@ describe('server', () => {
             timestamp: 1518719979286,
         }],
         timestamp: 1518721886922,
+        open: true,
     }
 
     describe('hashFactory()', () => {
@@ -72,8 +75,14 @@ describe('server', () => {
     describe('getLastBlock()', () => {
         it('Resolves the last block from the blockchain', async () => {
             expect.assertions(1)
-            const data = await getLastBlock()
-            return expect(data).toEqual(mockBlock)
+            await expect(getLastBlock()).resolves.toEqual(mockBlock)
+        })
+    })
+
+    describe('addNewBlock()', () => {
+        it('Adds a new block to the blockchain', async () => {
+            expect.assertions(1)
+            await expect(addNewBlock(2067)).resolves.toEqual({ message: 'blockchain accepted, user awarded' })
         })
     })
 })
