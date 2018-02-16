@@ -158,13 +158,12 @@ export const hashToAsciiChars = _.flow(
 export const convert = (hash) => {
     let nonce = -1
 
-    const mStartTime = moment()
+    console.time('Solved in')
 
     const originalArray = hashToAsciiChars(hash)
     const solution = findBinarySolution(originalArray, nonce)
 
-    const mSolveTime = moment.duration(moment().diff(mStartTime))
-    console.log(`Solved in ${mSolveTime.milliseconds()}ms.`)
+    console.timeEnd('Solved in')
 
     return solution
 }
