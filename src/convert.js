@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import moment from 'moment'
 import { createHash } from './helpers'
 
 export const getNextNonce = (nonce) => {
@@ -10,7 +9,7 @@ export const getNextHash = (originalHash, nonce) => {
     const splitNonce = nonce
         .toString()
         .split('')
-        .map(n => Number(n))
+        .map(Number)
 
     return [...originalHash, ...splitNonce]
 }
@@ -137,17 +136,17 @@ export const findBinarySolution = (hashArray, nonce, originalArray = hashArray) 
     const nextArray = getValidHashArray(hashArray)
     const newSolution = shuffleArray(nextArray)
 
-    if (!isBinaryArray(newSolution)) {
-        const nextNonce = getNextNonce(nonce)
-        const nextHash = getNextHash(originalArray, nextNonce)
-
-        return findBinarySolution(nextHash, nextNonce, originalArray)
+    if (isBinaryArray(newSolution)) {
+        return {
+            solution: createHash(newSolution),
+            nonce,
+        }
     }
 
-    return {
-        solution: createHash(newSolution),
-        nonce,
-    }
+    const nextNonce = getNextNonce(nonce)
+    const nextHash = getNextHash(originalArray, nextNonce)
+
+    return findBinarySolution(nextHash, nextNonce, originalArray)
 }
 
 export const hashToAsciiChars = _.flow(
